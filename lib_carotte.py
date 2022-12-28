@@ -295,6 +295,8 @@ class Concat(EquationVariable):
 class Slice(EquationVariable):
     '''Netlist SLICE'''
     def __init__(self, i1: int, i2: int, x: VariableOrDefer):
+        if i1 < 0: i1 += x.bus_size
+        if i2 < 0: i2 += x.bus_size
         if not 0 <= i1 < i2 <= x.bus_size:
             raise IndexError(f"Slice must satisfy `0 <= i1 < i2 <= bus_size`, i.e. {0} <= {i1} < {i2} <= {x.bus_size}")
         super().__init__(i2-i1)
@@ -310,6 +312,7 @@ class Slice(EquationVariable):
 class Select(EquationVariable):
     '''Netlist SELECT'''
     def __init__(self, i: int, x: VariableOrDefer):
+        if i < 0: i += self.bus_size
         if not 0 <= i < x.bus_size:
             raise IndexError(f"Select must satisfy `0 <= i < bus_size`, i.e. {0} <= {i} < {x.bus_size}")
         super().__init__(1)
