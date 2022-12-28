@@ -74,7 +74,7 @@ def process(
     if assignhooks is not None:
         alt_instrument.start()
     try:
-        module = __import__(module_name)
+        module = __import__(module_name, fromlist = [""])
     except ModuleNotFoundError:
         print(f"Could not load file '{module_file}'", file=sys.stderr)
         sys.exit(1)
