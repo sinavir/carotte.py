@@ -73,11 +73,7 @@ def process(
         module_name = re.sub("\\.py$", "", filename)
     if assignhooks is not None:
         alt_instrument.start()
-    try:
-        module = __import__(module_name, fromlist = [""])
-    except ModuleNotFoundError:
-        print(f"Could not load file '{module_file}'", file=sys.stderr)
-        sys.exit(1)
+    module = __import__(module_name, fromlist = [""])
     if assignhooks is not None:
         alt_instrument.stop()
     lib_carotte.reset()
