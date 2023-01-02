@@ -127,22 +127,22 @@ class Defer:
         self.val: typing.Optional[Variable] = None
         self.lazy_val = lazy_val
         self.bus_size = bus_size
-        _unevaluated_defer_set.add(self)
+        self._set_as_output = None
     def get_val(self) -> Variable:
         '''Helper to resolve the variable value once the loop issue has been solved'''
         if self.val is None:
             _unevaluated_defer_set.remove(self)
             self.val = self.lazy_val()
+            if self._set_as_output is not None: self.val.set_as_output(self._set_as_output)
             assert self.val.bus_size == self.bus_size
         return self.val
-    def __getattr__(self, attr: str) -> str:
-        if attr == 'name':
-            return self.get_val().name
-        if attr == 'bus_size':
-            return self.bus_size
-        if attr == 'autogen_name':
-            return True
-        raise AttributeError
+    def __getattr__(self, name: str) -> str:
+        if name != 'name':
+            raise AttributeError
+        return self.get_val().name
+    def set_as_output(self, s):
+        '''Sets this variable as a netlist OUTPUT'''
+        self._set_as_output = (s)
 
 VariableOrDefer = typing.Union[Variable, Defer]
 
